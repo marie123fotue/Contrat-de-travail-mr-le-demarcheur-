@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrat d'Ambassadeur - Mr Le Démarcheur</title>
+    <title>Devenir Ambassadeur - Mr Le Démarcheur</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
@@ -34,18 +34,73 @@
             text-align: center;
         }
 
+        .logo-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .logo-container img {
+            max-width: 300px;
+            height: auto;
+        }
+
         .header h1 {
             font-size: 28px;
-            margin-bottom: 10px;
+            margin-top: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .header p {
-            font-size: 14px;
-            opacity: 0.9;
+            font-size: 16px;
+            opacity: 0.95;
+            margin-top: 10px;
         }
 
         .content {
             padding: 40px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(2px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .form-section {
@@ -76,7 +131,7 @@
             font-weight: 600;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -85,7 +140,7 @@
             transition: all 0.3s;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -132,6 +187,7 @@
             font-size: 15px;
             border: none;
             transition: all 0.3s;
+            font-weight: 600;
         }
 
         .upload-btn:hover {
@@ -144,40 +200,54 @@
             background: white;
             padding: 30px;
             border-radius: 10px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #667eea;
             margin-bottom: 30px;
-            max-height: 500px;
+            max-height: 600px;
             overflow-y: auto;
         }
 
         .contract-text h3 {
             color: #667eea;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-top: 25px;
+            margin-bottom: 15px;
             font-size: 18px;
+            font-weight: 700;
+        }
+
+        .contract-text h3:first-child {
+            margin-top: 0;
         }
 
         .contract-text p, .contract-text li {
-            color: #555;
-            margin-bottom: 10px;
+            color: #333;
+            margin-bottom: 12px;
             text-align: justify;
+            line-height: 1.8;
         }
 
-        .contract-text ul {
-            margin-left: 20px;
+        .contract-text ul, .contract-text ol {
+            margin-left: 25px;
             margin-bottom: 15px;
+        }
+
+        .contract-text li {
+            margin-bottom: 8px;
+        }
+
+        .contract-text strong {
+            color: #764ba2;
         }
 
         .signature-section {
             background: #fff9e6;
-            border: 2px solid #ffc107;
+            border: 2px solid #667eea;
             border-radius: 10px;
             padding: 30px;
             margin-bottom: 30px;
         }
 
         .signature-section h3 {
-            color: #f57c00;
+            color: #764ba2;
             margin-bottom: 20px;
             font-size: 20px;
         }
@@ -189,16 +259,11 @@
             margin-bottom: 15px;
         }
 
-        #signatureCanvas {
+        #signatureCanvas, #adminSignatureCanvas {
             display: block;
             cursor: crosshair;
             touch-action: none;
-        }
-
-        .signature-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            width: 100%;
         }
 
         .btn {
@@ -224,7 +289,8 @@
         .btn-submit {
             background: #4caf50;
             color: white;
-            flex: 1;
+            width: 100%;
+            margin-top: 10px;
         }
 
         .btn-submit:hover {
@@ -239,15 +305,14 @@
             transform: none;
         }
 
-        .btn-download {
-            background: #2196F3;
+        .btn-blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            width: 100%;
-            margin-top: 20px;
         }
 
-        .btn-download:hover {
-            background: #0b7dda;
+        .btn-blue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .checkbox-group {
@@ -274,7 +339,7 @@
         .success-message {
             background: #d4edda;
             color: #155724;
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             margin-top: 20px;
             border: 2px solid #c3e6cb;
@@ -284,25 +349,130 @@
 
         .success-message.show {
             display: block;
+            animation: slideIn 0.5s;
         }
 
-        .logo-placeholder {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9ff;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-message h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .pending-card {
+            background: white;
+            border: 2px solid #667eea;
             border-radius: 10px;
+            padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
-        .logo-placeholder h2 {
+        .pending-card h4 {
             color: #667eea;
-            font-size: 26px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+            background: #f8f9ff;
+            border-radius: 5px;
+        }
+
+        .info-item strong {
+            color: #667eea;
+            display: block;
             margin-bottom: 5px;
         }
 
-        .logo-placeholder p {
+        .card-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid #667eea;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .ambassador-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .ambassador-card {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .ambassador-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .ambassador-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .ambassador-card h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .ambassador-card p {
             color: #666;
             font-size: 14px;
+        }
+
+        .commission-highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+
+        .commission-highlight strong {
+            color: #f57c00;
+            font-size: 18px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
         }
 
         @media (max-width: 768px) {
@@ -318,220 +488,295 @@
                 font-size: 22px;
             }
 
-            #signatureCanvas {
-                width: 100%;
+            .logo-container img {
+                max-width: 200px;
             }
-        }
 
-        .commission-highlight {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #ffc107;
-            margin: 15px 0;
-        }
-
-        .commission-highlight strong {
-            color: #f57c00;
-            font-size: 18px;
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 CONTRAT D'AMBASSADEUR</h1>
-            <p>Agence Immobilière Mr Le Démarcheur</p>
+            <div class="logo-container">
+                <img src="image-1.png" alt="Mr Le Démarcheur">
+            </div>
+            <h1>🏡 Plateforme Ambassadeurs</h1>
+            <p>Rejoignez notre équipe et gagnez jusqu'à 15 000 FCFA par client !</p>
         </div>
 
         <div class="content">
-            <div class="logo-placeholder">
-                <h2>🏢 MR LE DÉMARCHEUR</h2>
-                <p>Spécialiste en location de biens immobiliers et vente de meubles</p>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('candidature')">📝 Devenir Ambassadeur</button>
+                <button class="nav-tab" onclick="switchTab('validation')">👔 Espace Mr Le Démarcheur</button>
+                <button class="nav-tab" onclick="switchTab('ambassadeurs')">👥 Nos Ambassadeurs</button>
             </div>
 
-            <div class="form-section">
-                <h2>📝 Vos Informations Personnelles</h2>
-                
-                <div class="form-group">
-                    <label for="nom">Nom *</label>
-                    <input type="text" id="nom" required placeholder="Votre nom de famille">
-                </div>
+            <!-- TAB 1: CANDIDATURE AMBASSADEUR -->
+            <div id="candidature" class="tab-content active">
+                <div class="form-section">
+                    <h2>📋 Vos Informations Personnelles</h2>
+                    
+                    <div class="form-group">
+                        <label for="nom">Nom *</label>
+                        <input type="text" id="nom" required placeholder="Votre nom de famille">
+                    </div>
 
-                <div class="form-group">
-                    <label for="prenom">Prénom(s) *</label>
-                    <input type="text" id="prenom" required placeholder="Votre(vos) prénom(s)">
-                </div>
+                    <div class="form-group">
+                        <label for="prenom">Prénom(s) *</label>
+                        <input type="text" id="prenom" required placeholder="Votre(vos) prénom(s)">
+                    </div>
 
-                <div class="form-group">
-                    <label for="dateNaissance">Date de Naissance *</label>
-                    <input type="date" id="dateNaissance" required>
-                </div>
+                    <div class="form-group">
+                        <label for="dateNaissance">Date de Naissance *</label>
+                        <input type="date" id="dateNaissance" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="lieuResidence">Lieu de Résidence *</label>
-                    <input type="text" id="lieuResidence" required placeholder="Ville, Quartier">
-                </div>
+                    <div class="form-group">
+                        <label for="lieuResidence">Lieu de Résidence *</label>
+                        <input type="text" id="lieuResidence" required placeholder="Ville, Quartier">
+                    </div>
 
-                <div class="form-group">
-                    <label for="telephone">Numéro de Téléphone *</label>
-                    <input type="tel" id="telephone" required placeholder="+237 6XX XXX XXX">
-                </div>
+                    <div class="form-group">
+                        <label for="telephone">Numéro de Téléphone *</label>
+                        <input type="tel" id="telephone" required placeholder="+237 6XX XXX XXX">
+                    </div>
 
-                <div class="form-group">
-                    <label for="email">Adresse Email</label>
-                    <input type="email" id="email" placeholder="votre.email@exemple.com">
-                </div>
+                    <div class="form-group">
+                        <label for="email">Adresse Email *</label>
+                        <input type="email" id="email" required placeholder="votre.email@exemple.com">
+                    </div>
 
-                <div class="form-group">
-                    <label for="cni">Numéro CNI *</label>
-                    <input type="text" id="cni" required placeholder="Numéro de carte d'identité">
-                </div>
+                    <div class="form-group">
+                        <label for="cni">Numéro CNI *</label>
+                        <input type="text" id="cni" required placeholder="Numéro de carte d'identité">
+                    </div>
 
-                <div class="form-group">
-                    <label for="whatsapp">WhatsApp *</label>
-                    <input type="tel" id="whatsapp" required placeholder="+237 6XX XXX XXX">
-                </div>
+                    <div class="form-group">
+                        <label for="whatsapp">WhatsApp *</label>
+                        <input type="tel" id="whatsapp" required placeholder="+237 6XX XXX XXX">
+                    </div>
 
-                <div class="form-group">
-                    <label for="tiktok">Compte TikTok *</label>
-                    <input type="text" id="tiktok" required placeholder="@votre_compte">
-                </div>
+                    <div class="form-group">
+                        <label for="tiktok">Compte TikTok *</label>
+                        <input type="text" id="tiktok" required placeholder="@votre_compte">
+                    </div>
 
-                <div class="form-group">
-                    <label for="facebook">Compte Facebook *</label>
-                    <input type="text" id="facebook" required placeholder="Nom du profil Facebook">
-                </div>
+                    <div class="form-group">
+                        <label for="facebook">Compte Facebook *</label>
+                        <input type="text" id="facebook" required placeholder="Nom du profil Facebook">
+                    </div>
 
-                <div class="form-group">
-                    <label>Photo d'Identité *</label>
-                    <div class="photo-upload">
-                        <div class="photo-preview" id="photoPreview">
-                            <div class="photo-preview-placeholder">
-                                📷<br>Aucune photo
+                    <div class="form-group">
+                        <label>Photo d'Identité *</label>
+                        <div class="photo-upload">
+                            <div class="photo-preview" id="photoPreview">
+                                <div class="photo-preview-placeholder">📷<br>Aucune photo</div>
                             </div>
+                            <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                            <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
+                                Choisir une photo
+                            </button>
                         </div>
-                        <input type="file" id="photoInput" accept="image/*" style="display: none;">
-                        <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
-                            Choisir une photo
-                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div class="contract-text">
-                <h3>📄 CONTRAT DE COLLABORATION</h3>
-                
-                <p><strong>Date de signature :</strong> <span id="dateSignature"></span></p>
-                <p><strong>Durée :</strong> Indéterminée</p>
+                <div class="contract-text">
+                    <h3>📄 CONTRAT DE COLLABORATION D'AMBASSADEUR</h3>
+                    <p><strong>Date de signature :</strong> <span id="dateSignature"></span></p>
+                    <p><strong>Durée :</strong> Indéterminée</p>
 
-                <h3>ARTICLE 1 : OBJET DU CONTRAT</h3>
-                <p>Le présent contrat a pour objet de définir les conditions de collaboration entre l'Agence immobilière Mr Le Démarcheur et l'Ambassadeur dans le cadre de la promotion et de la commercialisation des biens immobiliers.</p>
+                    <h3>ARTICLE 1 : OBJET DU CONTRAT</h3>
+                    <p>Le présent contrat a pour objet de définir les conditions de collaboration entre L'AGENCE et L'AMBASSADEUR dans le cadre de la promotion et de la commercialisation des biens immobiliers proposés par Mr Le Démarcheur.</p>
 
-                <h3>ARTICLE 2 : MISSIONS DE L'AMBASSADEUR</h3>
-                <p>L'Ambassadeur s'engage à effectuer les missions suivantes :</p>
-                <ul>
-                    <li><strong>Reposter sur WhatsApp :</strong> Partager les statuts WhatsApp de l'Agence concernant les biens immobiliers (chambres, studios, appartements) et meubles.</li>
-                    <li><strong>Publier sur TikTok :</strong> Diffuser les contenus relatifs aux offres de l'Agence sur sa page TikTok.</li>
-                    <li><strong>Publier sur Facebook Marketplace :</strong> Mettre en ligne les annonces des biens immobiliers.</li>
-                    <li><strong>Prospection de clients :</strong> Identifier et amener des clients potentiels.</li>
-                </ul>
+                    <h3>ARTICLE 2 : MISSIONS DE L'AMBASSADEUR</h3>
+                    <p>L'AMBASSADEUR s'engage à effectuer les missions suivantes :</p>
+                    <ol>
+                        <li><strong>Reposter sur WhatsApp :</strong> Partager les statuts WhatsApp de L'AGENCE concernant les différents biens immobiliers disponibles (chambres, studios, appartements) et meubles.</li>
+                        <li><strong>Publier sur TikTok :</strong> Diffuser les contenus relatifs aux offres de L'AGENCE sur sa page TikTok personnelle.</li>
+                        <li><strong>Publier sur Facebook Marketplace :</strong> Mettre en ligne les annonces des biens immobiliers sur son compte Facebook Marketplace.</li>
+                        <li><strong>Prospection de clients :</strong> Identifier et amener des clients potentiels intéressés par les services de L'AGENCE.</li>
+                    </ol>
 
-                <h3>ARTICLE 3 : PRÉREQUIS</h3>
-                <p>L'Ambassadeur doit obligatoirement disposer de :</p>
-                <ul>
-                    <li>Un compte TikTok actif</li>
-                    <li>Un compte Facebook avec accès au Marketplace</li>
-                    <li>Un compte WhatsApp actif</li>
-                    <li>Un smartphone avec connexion internet</li>
-                </ul>
+                    <h3>ARTICLE 3 : PRÉREQUIS</h3>
+                    <p>Pour exercer ses fonctions, L'AMBASSADEUR doit obligatoirement disposer de :</p>
+                    <ul>
+                        <li>Un compte TikTok actif</li>
+                        <li>Un compte Facebook avec accès au Marketplace</li>
+                        <li>Un compte WhatsApp actif</li>
+                        <li>Un smartphone avec connexion internet</li>
+                    </ul>
+                    <p>L'AMBASSADEUR atteste sur l'honneur remplir ces conditions à la signature du présent contrat.</p>
 
-                <h3>ARTICLE 4 : RÉMUNÉRATION</h3>
-                <div class="commission-highlight">
-                    <p><strong>Commission par client : Entre 5 000 FCFA et 15 000 FCFA</strong></p>
+                    <h3>ARTICLE 4 : RÉMUNÉRATION</h3>
+                    <p>L'AMBASSADEUR bénéficiera d'une commission sur chaque client apporté selon les modalités suivantes :</p>
+                    <div class="commission-highlight">
+                        <p><strong>Commission par client : Entre 5 000 FCFA et 15 000 FCFA</strong></p>
+                    </div>
+                    
+                    <p><strong>Conditions d'obtention de la commission :</strong></p>
+                    <ul>
+                        <li>Le client doit avoir été personnellement apporté par L'AMBASSADEUR</li>
+                        <li>Le client doit avoir effectué le <strong>paiement complet</strong> de la prestation (location ou achat)</li>
+                        <li>L'AMBASSADEUR doit être en mesure de prouver qu'il est à l'origine du contact avec le client</li>
+                    </ul>
+                    
+                    <p>Le montant exact de la commission sera déterminé par L'AGENCE en fonction :</p>
+                    <ul>
+                        <li>Du type de bien loué ou vendu</li>
+                        <li>Du montant de la transaction</li>
+                        <li>De la qualité du service rendu</li>
+                    </ul>
+                    
+                    <p>Le paiement de la commission interviendra dans un délai de <strong>7 jours ouvrables</strong> après la confirmation du paiement du client.</p>
+
+                    <h3>ARTICLE 5 : DURÉE DU CONTRAT</h3>
+                    <p>Le présent contrat est conclu pour une <strong>durée indéterminée</strong> à compter du <span id="dateSignature2"></span>.</p>
+                    <p>Il prendra effet dès sa signature et se poursuivra tant que L'AMBASSADEUR continuera à exécuter ses missions conformément aux dispositions du présent contrat.</p>
+
+                    <h3>ARTICLE 6 : OBLIGATIONS DE L'AMBASSADEUR</h3>
+                    <p>L'AMBASSADEUR s'engage à :</p>
+                    <ol>
+                        <li>Représenter L'AGENCE de manière professionnelle et respectueuse</li>
+                        <li>Diffuser uniquement les contenus officiels fournis par L'AGENCE</li>
+                        <li>Ne pas modifier les informations relatives aux biens immobiliers</li>
+                        <li>Respecter la politique de confidentialité de L'AGENCE</li>
+                        <li>Informer L'AGENCE de tout client potentiel</li>
+                        <li>Assurer une publication régulière des offres</li>
+                        <li>Ne pas dénigrer L'AGENCE ou ses concurrents</li>
+                    </ol>
+
+                    <h3>ARTICLE 7 : OBLIGATIONS DE L'AGENCE</h3>
+                    <p>L'AGENCE s'engage à :</p>
+                    <ol>
+                        <li>Fournir régulièrement les contenus à diffuser (photos, descriptions, prix)</li>
+                        <li>Verser les commissions dues dans les délais convenus</li>
+                        <li>Former L'AMBASSADEUR si nécessaire aux techniques de promotion</li>
+                        <li>Assurer un suivi et un accompagnement de L'AMBASSADEUR</li>
+                    </ol>
+
+                    <h3>ARTICLE 8 : RÉSILIATION</h3>
+                    <p>Le présent contrat peut être résilié par l'une ou l'autre des parties :</p>
+                    
+                    <p><strong>Par L'AMBASSADEUR :</strong></p>
+                    <ul>
+                        <li>À tout moment, moyennant un préavis de <strong>15 jours</strong> par notification écrite (SMS, WhatsApp ou email)</li>
+                    </ul>
+                    
+                    <p><strong>Par L'AGENCE :</strong></p>
+                    <ul>
+                        <li>En cas de manquement grave aux obligations contractuelles</li>
+                        <li>En cas de non-respect des prérequis</li>
+                        <li>En cas d'inactivité prolongée (plus de 30 jours sans publication)</li>
+                        <li>À tout moment, moyennant un préavis de <strong>15 jours</strong></li>
+                    </ul>
+
+                    <h3>ARTICLE 9 : STATUT</h3>
+                    <p>L'AMBASSADEUR exerce son activité en qualité de <strong>collaborateur indépendant</strong>. Il n'est pas lié à L'AGENCE par un contrat de travail salarié et ne bénéficie pas des avantages sociaux y afférents.</p>
+                    <p>L'AMBASSADEUR est libre d'organiser son temps de travail et ses méthodes de promotion dans le respect des termes du présent contrat.</p>
                 </div>
-                <p><strong>Conditions d'obtention :</strong></p>
-                <ul>
-                    <li>Le client doit avoir été personnellement apporté par l'Ambassadeur</li>
-                    <li>Le client doit avoir effectué le paiement complet</li>
-                    <li>L'Ambassadeur doit prouver qu'il est à l'origine du contact</li>
-                </ul>
-                <p>Le paiement intervient dans un délai de 7 jours ouvrables après confirmation du paiement du client.</p>
 
-                <h3>ARTICLE 5 : DURÉE DU CONTRAT</h3>
-                <p>Le contrat est conclu pour une durée indéterminée et se poursuivra tant que l'Ambassadeur continuera à exécuter ses missions.</p>
+                <div class="signature-section">
+                    <h3>✍️ Votre Signature</h3>
+                    <p style="margin-bottom: 15px;">Signez dans le cadre ci-dessous avec votre doigt ou votre souris :</p>
+                    
+                    <div class="signature-canvas-container">
+                        <canvas id="signatureCanvas" width="600" height="200"></canvas>
+                    </div>
 
-                <h3>ARTICLE 6 : OBLIGATIONS DE L'AMBASSADEUR</h3>
-                <ul>
-                    <li>Représenter l'Agence de manière professionnelle</li>
-                    <li>Diffuser uniquement les contenus officiels</li>
-                    <li>Ne pas modifier les informations des biens</li>
-                    <li>Respecter la confidentialité</li>
-                    <li>Assurer une publication régulière</li>
-                </ul>
-
-                <h3>ARTICLE 7 : RÉSILIATION</h3>
-                <p>Le contrat peut être résilié par l'une ou l'autre des parties moyennant un préavis de 15 jours.</p>
-
-                <h3>ARTICLE 8 : STATUT</h3>
-                <p>L'Ambassadeur exerce en qualité de collaborateur indépendant. Il n'est pas lié par un contrat de travail salarié.</p>
-            </div>
-
-            <div class="signature-section">
-                <h3>✍️ Votre Signature</h3>
-                <p style="margin-bottom: 15px;">Signez dans le cadre ci-dessous avec votre doigt ou votre souris :</p>
-                
-                <div class="signature-canvas-container">
-                    <canvas id="signatureCanvas" width="600" height="200"></canvas>
-                </div>
-
-                <div class="signature-buttons">
                     <button class="btn btn-clear" onclick="clearSignature()">🗑️ Effacer</button>
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="acceptContract">
+                            <span>Je certifie avoir lu et compris l'intégralité du contrat ci-dessus et j'accepte tous les termes et conditions. Je m'engage à respecter mes obligations en tant qu'Ambassadeur de Mr Le Démarcheur.</span>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-submit" id="submitBtn" onclick="submitApplication()" disabled>
+                        ✅ Soumettre ma Candidature
+                    </button>
                 </div>
 
-                <div class="checkbox-group">
-                    <label>
-                        <input type="checkbox" id="acceptContract">
-                        <span>Je certifie avoir lu et compris l'intégralité du contrat et j'accepte tous les termes et conditions. Je m'engage à respecter mes obligations en tant qu'Ambassadeur de Mr Le Démarcheur.</span>
-                    </label>
+                <div class="success-message" id="successMessage">
+                    <h3>⏳ Candidature Envoyée avec Succès !</h3>
+                    <p style="font-size: 18px; margin: 20px 0;">Votre candidature a été transmise à Mr Le Démarcheur.</p>
+                    <p style="font-size: 16px;">Veuillez patienter le temps que Mr Le Démarcheur reçoive et examine votre candidature.</p>
+                    <p style="margin-top: 15px;">Vous recevrez une notification par email dès validation de votre candidature.</p>
+                    <p style="margin-top: 20px; font-weight: 600; color: #667eea;">Merci pour votre confiance ! 🙏</p>
                 </div>
-
-                <button class="btn btn-submit" id="submitBtn" onclick="submitContract()" disabled>
-                    ✅ Valider et Signer le Contrat
-                </button>
-
-                <button class="btn btn-download" id="downloadBtn" onclick="downloadContract()" style="display: none;">
-                    📥 Télécharger mon Contrat Signé
-                </button>
             </div>
 
-            <div class="success-message" id="successMessage">
-                <h3>✅ Contrat Signé avec Succès !</h3>
-                <p>Bienvenue dans l'équipe des Ambassadeurs Mr Le Démarcheur !</p>
-                <p>Vous pouvez maintenant télécharger votre contrat signé.</p>
+            <!-- TAB 2: VALIDATION ADMIN -->
+            <div id="validation" class="tab-content">
+                <div class="form-section">
+                    <h2>🔐 Accès Administrateur</h2>
+                    <div class="form-group">
+                        <label for="adminPassword">Mot de passe :</label>
+                        <input type="password" id="adminPassword" placeholder="Entrez le mot de passe">
+                    </div>
+                    <button class="btn btn-blue" onclick="unlockAdmin()">🔓 Déverrouiller</button>
+                </div>
+
+                <div id="adminPanel" style="display: none;">
+                    <h2 style="color: #667eea; margin-bottom: 20px;">📋 Candidatures en Attente</h2>
+                    <div id="pendingList"></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: LISTE AMBASSADEURS -->
+            <div id="ambassadeurs" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">👥 Nos Ambassadeurs Actifs</h2>
+                <div class="ambassador-grid" id="ambassadorsList"></div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        // Date du jour
-        document.getElementById('dateSignature').textContent = new Date().toLocaleDateString('fr-FR');
+        // Configuration
+        const ADMIN_PASSWORD = "demarcheur2025";
+        let currentPhotoData = null;
+        let currentSignatureData = null;
 
-        // Gestion de la photo
+        // Date du jour
+        const today = new Date().toLocaleDateString('fr-FR');
+        document.getElementById('dateSignature').textContent = today;
+        document.getElementById('dateSignature2').textContent = today;
+
+        // Gestion des tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'ambassadeurs') {
+                loadAmbassadors();
+            } else if (tabName === 'validation') {
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        }
+
+        // Upload photo
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    currentPhotoData = e.target.result;
                     document.getElementById('photoPreview').innerHTML = 
-                        `<img src="${e.target.result}" alt="Photo">`;
+                        `<img src="${currentPhotoData}" alt="Photo">`;
+                    checkFormValidity();
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Canvas de signature
+        // Canvas signature ambassadeur
         const canvas = document.getElementById('signatureCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
@@ -552,125 +797,5 @@
             hasSignature = true;
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const y = (e.clientY || e.touches[0].clientY) - rect.top;
-            ctx.lineTo(x, y);
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-            checkFormValidity();
+            const y = (e.clientY || e.touches)
         }
-
-        function stopDrawing() {
-            isDrawing = false;
-        }
-
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('touchstart', startDrawing);
-        canvas.addEventListener('touchmove', draw);
-        canvas.addEventListener('touchend', stopDrawing);
-
-        function clearSignature() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            hasSignature = false;
-            checkFormValidity();
-        }
-
-        // Vérifier la validité du formulaire
-        function checkFormValidity() {
-            const nom = document.getElementById('nom').value;
-            const prenom = document.getElementById('prenom').value;
-            const dateNaissance = document.getElementById('dateNaissance').value;
-            const lieuResidence = document.getElementById('lieuResidence').value;
-            const telephone = document.getElementById('telephone').value;
-            const cni = document.getElementById('cni').value;
-            const whatsapp = document.getElementById('whatsapp').value;
-            const tiktok = document.getElementById('tiktok').value;
-            const facebook = document.getElementById('facebook').value;
-            const photoUploaded = document.getElementById('photoInput').files.length > 0;
-            const acceptContract = document.getElementById('acceptContract').checked;
-
-            const isValid = nom && prenom && dateNaissance && lieuResidence && 
-                          telephone && cni && whatsapp && tiktok && facebook && 
-                          photoUploaded && hasSignature && acceptContract;
-
-            document.getElementById('submitBtn').disabled = !isValid;
-        }
-
-        // Écouter les changements sur tous les champs
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', checkFormValidity);
-            input.addEventListener('change', checkFormValidity);
-        });
-
-        function submitContract() {
-            document.getElementById('successMessage').classList.add('show');
-            document.getElementById('submitBtn').style.display = 'none';
-            document.getElementById('downloadBtn').style.display = 'block';
-            
-            // Désactiver tous les champs
-            document.querySelectorAll('input').forEach(input => {
-                input.disabled = true;
-            });
-            
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        function downloadContract() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // Récupérer les données
-            const nom = document.getElementById('nom').value;
-            const prenom = document.getElementById('prenom').value;
-            const dateNaissance = document.getElementById('dateNaissance').value;
-            const dateSignature = document.getElementById('dateSignature').textContent;
-
-            // En-tête
-            doc.setFontSize(20);
-            doc.setTextColor(102, 126, 234);
-            doc.text('CONTRAT D\'AMBASSADEUR', 105, 20, { align: 'center' });
-            
-            doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0);
-            doc.text('Agence Immobiliere Mr Le Demarcheur', 105, 30, { align: 'center' });
-
-            // Informations de l'ambassadeur
-            doc.setFontSize(14);
-            doc.text('Informations de l\'Ambassadeur:', 20, 50);
-            doc.setFontSize(11);
-            doc.text(`Nom: ${nom}`, 20, 60);
-            doc.text(`Prenom(s): ${prenom}`, 20, 67);
-            doc.text(`Date de naissance: ${dateNaissance}`, 20, 74);
-            doc.text(`Lieu: ${document.getElementById('lieuResidence').value}`, 20, 81);
-            doc.text(`Tel: ${document.getElementById('telephone').value}`, 20, 88);
-            doc.text(`CNI: ${document.getElementById('cni').value}`, 20, 95);
-
-            // Date de signature
-            doc.text(`Date de signature: ${dateSignature}`, 20, 110);
-
-            // Texte du contrat (simplifié)
-            doc.setFontSize(12);
-            doc.text('Article 1: Objet du Contrat', 20, 125);
-            doc.setFontSize(10);
-            const text1 = 'Le present contrat definit les conditions de collaboration pour la promotion des biens immobiliers.';
-            doc.text(text1, 20, 132, { maxWidth: 170 });
-
-            doc.setFontSize(12);
-            doc.text('Article 2: Remuneration', 20, 145);
-            doc.setFontSize(10);
-            doc.text('Commission: Entre 5 000 FCFA et 15 000 FCFA par client apporte.', 20, 152, { maxWidth: 170 });
-
-            // Ajouter la signature
-            const signatureData = canvas.toDataURL('image/png');
-            doc.text('Signature de l\'Ambassadeur:', 20, 180);
-            doc.addImage(signatureData, 'PNG', 20, 185, 80, 30);
-
-            // Sauvegarder
-            doc.save(`Contrat_Ambassadeur_${nom}_${prenom}.pdf`);
-        }
-    </script>
-</body>
-</html>
