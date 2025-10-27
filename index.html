@@ -257,13 +257,15 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             margin-bottom: 15px;
+            overflow: hidden;
         }
 
-        #signatureCanvas, #adminSignatureCanvas {
+        #signatureCanvas {
             display: block;
             cursor: crosshair;
             touch-action: none;
             width: 100%;
+            border: none;
         }
 
         .btn {
@@ -510,9 +512,9 @@
 
         <div class="content">
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="switchTab('candidature')">📝 Devenir Ambassadeur</button>
-                <button class="nav-tab" onclick="switchTab('validation')">👔 Espace Mr Le Démarcheur</button>
-                <button class="nav-tab" onclick="switchTab('ambassadeurs')">👥 Nos Ambassadeurs</button>
+                <button class="nav-tab active" data-tab="candidature">📝 Devenir Ambassadeur</button>
+                <button class="nav-tab" data-tab="validation">👔 Espace Mr Le Démarcheur</button>
+                <button class="nav-tab" data-tab="ambassadeurs">👥 Nos Ambassadeurs</button>
             </div>
 
             <!-- TAB 1: CANDIDATURE AMBASSADEUR -->
@@ -551,11 +553,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="cni">Numéro CNI *</label>
-                        <input type="text" id="cni" required placeholder="Numéro de carte d'identité">
-                    </div>
-
-                    <div class="form-group">
                         <label for="whatsapp">WhatsApp *</label>
                         <input type="tel" id="whatsapp" required placeholder="+237 6XX XXX XXX">
                     </div>
@@ -577,7 +574,7 @@
                                 <div class="photo-preview-placeholder">📷<br>Aucune photo</div>
                             </div>
                             <input type="file" id="photoInput" accept="image/*" style="display: none;">
-                            <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
+                            <button class="upload-btn" type="button" onclick="document.getElementById('photoInput').click()">
                                 Choisir une photo
                             </button>
                         </div>
@@ -687,7 +684,7 @@
                         <canvas id="signatureCanvas" width="600" height="200"></canvas>
                     </div>
 
-                    <button class="btn btn-clear" onclick="clearSignature()">🗑️ Effacer</button>
+                    <button class="btn btn-clear" type="button" onclick="clearSignature()">🗑️ Effacer</button>
 
                     <div class="checkbox-group">
                         <label>
@@ -696,7 +693,7 @@
                         </label>
                     </div>
 
-                    <button class="btn btn-submit" id="submitBtn" onclick="submitApplication()" disabled>
+                    <button class="btn btn-submit" id="submitBtn" type="button" onclick="submitApplication()" disabled>
                         ✅ Soumettre ma Candidature
                     </button>
                 </div>
@@ -718,7 +715,7 @@
                         <label for="adminPassword">Mot de passe :</label>
                         <input type="password" id="adminPassword" placeholder="Entrez le mot de passe">
                     </div>
-                    <button class="btn btn-blue" onclick="unlockAdmin()">🔓 Déverrouiller</button>
+                    <button class="btn btn-blue" type="button" onclick="unlockAdmin()">🔓 Déverrouiller</button>
                 </div>
 
                 <div id="adminPanel" style="display: none;">
@@ -741,19 +738,41 @@
         let currentPhotoData = null;
         let currentSignatureData = null;
 
+        // Stockage en mémoire
+        let applications = [];
+        let ambassadors = [];
+
         // Date du jour
         const today = new Date().toLocaleDateString('fr-FR');
         document.getElementById('dateSignature').textContent = today;
         document.getElementById('dateSignature2').textContent = today;
 
-        // Gestion des tabs
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+        // Gestion des tabs avec event delegation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        });
 
+        function switchTab(tabName) {
+            // Cacher tous les contenus
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Désactiver tous les boutons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Activer le contenu sélectionné
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activer le bouton correspondant
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Charger les données si nécessaire
             if (tabName === 'ambassadeurs') {
                 loadAmbassadors();
             } else if (tabName === 'validation') {
@@ -775,8 +794,7 @@
                 reader.readAsDataURL(file);
             }
         });
-
-        // Canvas signature ambassadeur
+ // Canvas de signature
         const canvas = document.getElementById('signatureCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
@@ -797,5 +815,125 @@
             hasSignature = true;
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const y = (e.clientY || e.touches)
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            checkFormValidity();
         }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+            checkFormValidity();
+        }
+
+        // Vérifier la validité du formulaire
+        function checkFormValidity() {
+            const nom = document.getElementById('nom').value;
+            const prenom = document.getElementById('prenom').value;
+            const dateNaissance = document.getElementById('dateNaissance').value;
+            const lieuResidence = document.getElementById('lieuResidence').value;
+            const telephone = document.getElementById('telephone').value;
+            const cni = document.getElementById('cni').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+            const tiktok = document.getElementById('tiktok').value;
+            const facebook = document.getElementById('facebook').value;
+            const photoUploaded = document.getElementById('photoInput').files.length > 0;
+            const acceptContract = document.getElementById('acceptContract').checked;
+
+            const isValid = nom && prenom && dateNaissance && lieuResidence && 
+                          telephone && cni && whatsapp && tiktok && facebook && 
+                          photoUploaded && hasSignature && acceptContract;
+
+            document.getElementById('submitBtn').disabled = !isValid;
+        }
+
+        // Écouter les changements sur tous les champs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+            input.addEventListener('change', checkFormValidity);
+        });
+
+        function submitContract() {
+            document.getElementById('successMessage').classList.add('show');
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'block';
+            
+            // Désactiver tous les champs
+            document.querySelectorAll('input').forEach(input => {
+                input.disabled = true;
+            });
+            
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function downloadContract() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Récupérer les données
+            const nom = document.getElementById('nom').value;
+            const prenom = document.getElementById('prenom').value;
+            const dateNaissance = document.getElementById('dateNaissance').value;
+            const dateSignature = document.getElementById('dateSignature').textContent;
+
+            // En-tête
+            doc.setFontSize(20);
+            doc.setTextColor(102, 126, 234);
+            doc.text('CONTRAT D\'AMBASSADEUR', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Agence Immobiliere Mr Le Demarcheur', 105, 30, { align: 'center' });
+
+            // Informations de l'ambassadeur
+            doc.setFontSize(14);
+            doc.text('Informations de l\'Ambassadeur:', 20, 50);
+            doc.setFontSize(11);
+            doc.text(`Nom: ${nom}`, 20, 60);
+            doc.text(`Prenom(s): ${prenom}`, 20, 67);
+            doc.text(`Date de naissance: ${dateNaissance}`, 20, 74);
+            doc.text(`Lieu: ${document.getElementById('lieuResidence').value}`, 20, 81);
+            doc.text(`Tel: ${document.getElementById('telephone').value}`, 20, 88);
+            doc.text(`CNI: ${document.getElementById('cni').value}`, 20, 95);
+
+            // Date de signature
+            doc.text(`Date de signature: ${dateSignature}`, 20, 110);
+
+            // Texte du contrat (simplifié)
+            doc.setFontSize(12);
+            doc.text('Article 1: Objet du Contrat', 20, 125);
+            doc.setFontSize(10);
+            const text1 = 'Le present contrat definit les conditions de collaboration pour la promotion des biens immobiliers.';
+            doc.text(text1, 20, 132, { maxWidth: 170 });
+
+            doc.setFontSize(12);
+            doc.text('Article 2: Remuneration', 20, 145);
+            doc.setFontSize(10);
+            doc.text('Commission: Entre 5 000 FCFA et 15 000 FCFA par client apporte.', 20, 152, { maxWidth: 170 });
+
+            // Ajouter la signature
+            const signatureData = canvas.toDataURL('image/png');
+            doc.text('Signature de l\'Ambassadeur:', 20, 180);
+            doc.addImage(signatureData, 'PNG', 20, 185, 80, 30);
+
+            // Sauvegarder
+            doc.save(`Contrat_Ambassadeur_${nom}_${prenom}.pdf`);
+        }
+       </script>
+</body>
+</html> 
